@@ -1,11 +1,3 @@
-<!--
-  Profile README for: yousfimh
-  To use it:
-  1. Create a public GitHub repository named exactly: yousfimh
-  2. Add this file as README.md
-  3. Edit any links or project descriptions you want to customize
--->
-
 <p align="center">
   <img
     src="https://capsule-render.vercel.app/api?type=waving&height=220&color=0:0f172a,50:2563eb,100:7c3aed&text=Yousfi%20Mohamed%20Houssam&fontColor=ffffff&fontSize=42&fontAlignY=38&desc=Developer%20%7C%20TypeScript%20%7C%20Open%20Source%20%7C%20AI%20Explorer&descAlignY=58&animation=fadeIn"
