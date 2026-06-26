@@ -145,7 +145,7 @@
   <img
     width="100%"
     src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-private-stats.svg"
-    alt="Yousfi Mohamed Houssam GitHub private and public stats"
+    alt="Yousfi Mohamed Houssam private and public GitHub stats"
   />
 </p>
 
