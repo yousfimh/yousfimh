@@ -144,32 +144,24 @@
 <p align="center">
   <img
     width="100%"
-    src="https://github-readme-stats.vercel.app/api?username=yousfimh&show_icons=true&theme=github_dark&hide_border=true&rank_icon=github&border_radius=12&card_width=1000&include_all_commits=true&count_private=true"
-    alt="Yousfi Mohamed Houssam GitHub Stats"
+    src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-private-stats.svg"
+    alt="Yousfi Mohamed Houssam GitHub private and public stats"
   />
 </p>
 
 <p align="center">
   <img
     width="100%"
-    src="https://streak-stats.demolab.com?user=yousfimh&theme=github-dark-blue&hide_border=true&border_radius=12&card_width=1000"
-    alt="Yousfi Mohamed Houssam GitHub Streak"
+    src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-private-languages.svg"
+    alt="Yousfi Mohamed Houssam most used languages"
   />
 </p>
 
 <p align="center">
   <img
     width="100%"
-    src="https://github-readme-stats.vercel.app/api/top-langs/?username=yousfimh&layout=compact&theme=github_dark&hide_border=true&border_radius=12&card_width=1000&langs_count=10"
-    alt="Yousfi Mohamed Houssam Most Used Languages"
-  />
-</p>
-
-<p align="center">
-  <img
-    width="100%"
-    src="https://github-readme-activity-graph.vercel.app/graph?username=yousfimh&theme=github-dark&hide_border=true&radius=12"
-    alt="Yousfi Mohamed Houssam Contribution Graph"
+    src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-private-activity.svg"
+    alt="Yousfi Mohamed Houssam contribution activity"
   />
 </p>
 
@@ -186,15 +178,15 @@
   <picture>
     <source
       media="(prefers-color-scheme: dark)"
-      srcset="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake-dark.svg"
+      srcset="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake-blue-dark.svg"
     />
     <source
       media="(prefers-color-scheme: light)"
-      srcset="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake-light.svg"
+      srcset="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake-blue-light.svg"
     />
     <img
       alt="Yousfi Mohamed Houssam GitHub contribution snake"
-      src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake-dark.svg"
+      src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake-blue-dark.svg"
       width="100%"
     />
   </picture>
