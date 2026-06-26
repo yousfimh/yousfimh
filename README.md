@@ -177,23 +177,33 @@
 
 ## 🐍 Contribution Snake
 
-<p align="center">
-  <picture>
-    <source
-      media="(prefers-color-scheme: dark)"
-      srcset="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake-dark.svg"
-    />
-    <source
-      media="(prefers-color-scheme: light)"
-      srcset="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake.svg"
-    />
-    <img
-      alt="github contribution snake"
-      src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake.svg"
-      width="100%"
-    />
-  </picture>
-</p>
+<table align="center">
+  <tr>
+    <td align="center">
+      <b>My GitHub contributions — public + private</b>
+      <br />
+      <sub>Generated automatically from my GitHub contribution graph</sub>
+      <br /><br />
+
+<picture>
+  <source
+    media="(prefers-color-scheme: dark)"
+    srcset="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake-dark.svg"
+  />
+  <source
+    media="(prefers-color-scheme: light)"
+    srcset="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake-light.svg"
+  />
+  <img
+    alt="Yousfi Mohamed Houssam GitHub contribution snake"
+    src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake-dark.svg"
+    width="100%"
+  />
+</picture>
+
+  </td>
+  </tr>
+</table>
 
 ---
 
