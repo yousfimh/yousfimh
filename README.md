@@ -193,7 +193,7 @@
 
 <p align="center">
   <img
-    src="https://github-profile-trophy.vercel.app/?username=yousfimh&theme=algolia&no-frame=true&no-bg=true&margin-w=8&margin-h=8"
+    src="https://github-profile-trophy.vercel.app/?username=yousfimh&theme=algolia&no-frame=true&no-bg=true&row=1&column=6"
     alt="GitHub Trophies"
   />
 </p>
@@ -203,13 +203,21 @@
 ## 🐍 Contribution Snake
 
 <p align="center">
-  <img
-    src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-contribution-grid-snake-dark.svg"
-    alt="Contribution Snake"
-  />
+  <picture>
+    <source
+      media="(prefers-color-scheme: dark)"
+      srcset="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake-dark.svg"
+    />
+    <source
+      media="(prefers-color-scheme: light)"
+      srcset="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake.svg"
+    />
+    <img
+      alt="github contribution snake"
+      src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake.svg"
+    />
+  </picture>
 </p>
-
-> To make the snake work, create the workflow file `.github/workflows/snake.yml` in this same repository and run it once from the **Actions** tab.
 
 ---
 
