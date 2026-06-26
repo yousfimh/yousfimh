@@ -180,7 +180,7 @@
 <table align="center">
   <tr>
     <td align="center">
-      <b>My GitHub contributions — public + private</b>
+      <b>My GitHub contributions</b>
       <br />
       <sub>Generated automatically from my GitHub contribution graph</sub>
       <br /><br />
