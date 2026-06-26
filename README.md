@@ -135,24 +135,6 @@
       </p>
     </td>
   </tr>
-  <tr>
-    <td width="50%">
-      <h3 align="center">Todo App Android</h3>
-      <p align="center">
-        A mobile todo application focused on simple task management.
-        <br />
-        <a href="https://github.com/yousfimh/todo-app-android"><strong>View Repository →</strong></a>
-      </p>
-    </td>
-    <td width="50%">
-      <h3 align="center">Octolib</h3>
-      <p align="center">
-        A student-managed library for ESI SBA lessons, labs, and previous exams.
-        <br />
-        <a href="https://github.com/yousfimh/octolib.org"><strong>View Repository →</strong></a>
-      </p>
-    </td>
-  </tr>
 </table>
 
 ---
@@ -161,32 +143,33 @@
 
 <p align="center">
   <img
-    src="https://github-readme-stats.vercel.app/api?username=yousfimh&show_icons=true&theme=github_dark&hide_border=true&rank_icon=github"
-    height="165"
-    alt="GitHub Stats"
-  />
-  <img
-    src="https://github-readme-stats.vercel.app/api/top-langs/?username=yousfimh&layout=compact&theme=github_dark&hide_border=true"
-    height="165"
-    alt="Top Languages"
+    width="100%"
+    src="https://github-readme-stats.vercel.app/api?username=yousfimh&show_icons=true&theme=github_dark&hide_border=true&rank_icon=github&border_radius=12&card_width=1000&include_all_commits=true&count_private=true"
+    alt="Yousfi Mohamed Houssam GitHub Stats"
   />
 </p>
 
 <p align="center">
   <img
-    src="https://streak-stats.demolab.com?user=yousfimh&theme=github-dark-blue&hide_border=true"
-    alt="GitHub Streak"
+    width="100%"
+    src="https://streak-stats.demolab.com?user=yousfimh&theme=github-dark-blue&hide_border=true&border_radius=12&card_width=1000"
+    alt="Yousfi Mohamed Houssam GitHub Streak"
   />
 </p>
 
----
-
-## 🏆 GitHub Trophies
+<p align="center">
+  <img
+    width="100%"
+    src="https://github-readme-stats.vercel.app/api/top-langs/?username=yousfimh&layout=compact&theme=github_dark&hide_border=true&border_radius=12&card_width=1000&langs_count=10"
+    alt="Yousfi Mohamed Houssam Most Used Languages"
+  />
+</p>
 
 <p align="center">
   <img
-    src="https://github-profile-trophy.vercel.app/?username=yousfimh&theme=algolia&no-frame=true&no-bg=true&row=1&column=6"
-    alt="GitHub Trophies"
+    width="100%"
+    src="https://github-readme-activity-graph.vercel.app/graph?username=yousfimh&theme=github-dark&hide_border=true&radius=12"
+    alt="Yousfi Mohamed Houssam Contribution Graph"
   />
 </p>
 
@@ -207,19 +190,9 @@
     <img
       alt="github contribution snake"
       src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake.svg"
+      width="100%"
     />
   </picture>
-</p>
-
----
-
-## 📈 Activity Graph
-
-<p align="center">
-  <img
-    src="https://github-readme-activity-graph.vercel.app/graph?username=yousfimh&theme=github-dark&hide_border=true"
-    alt="GitHub Activity Graph"
-  />
 </p>
 
 ---
