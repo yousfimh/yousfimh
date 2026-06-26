@@ -33,7 +33,7 @@ jobs:
             dist/github-snake-blue-light.svg?color_snake=%230969da&color_dots=%23ebf5ff,%23cfe8ff,%237cc0ff,%232f81f7,%230969da
             dist/github-snake-blue-dark.svg?color_snake=%2358a6ff&color_dots=%230d1117,%230d419d,%230969da,%231f6feb,%2358a6ff
 
-      - name: Generate old-style private stats cards
+      - name: Generate modern private stats
         run: |
           python3 <<'PY'
           import os
@@ -43,37 +43,36 @@ jobs:
           import datetime as dt
 
           TOKEN = os.environ["SNK_GITHUB_TOKEN"]
-          DISPLAY_NAME = "Yousfi Mohamed Houssam"
           OUT = "dist"
           os.makedirs(OUT, exist_ok=True)
 
           HEADERS = {
               "Authorization": f"Bearer {TOKEN}",
               "Accept": "application/vnd.github+json",
-              "User-Agent": "yousfimh-profile-readme",
+              "User-Agent": "yousfimh-profile-readme"
           }
 
           def safe(value):
               return html.escape(str(value), quote=True)
 
           def fmt(value):
-              try:
-                  return f"{int(value):,}"
-              except Exception:
-                  return str(value)
+              return f"{int(value):,}"
 
           def graphql(query, variables=None):
-              body = json.dumps({"query": query, "variables": variables or {}}).encode()
+              body = json.dumps({
+                  "query": query,
+                  "variables": variables or {}
+              }).encode("utf-8")
 
               req = urllib.request.Request(
                   "https://api.github.com/graphql",
                   data=body,
                   headers={**HEADERS, "Content-Type": "application/json"},
-                  method="POST",
+                  method="POST"
               )
 
               with urllib.request.urlopen(req, timeout=30) as res:
-                  payload = json.loads(res.read().decode())
+                  payload = json.loads(res.read().decode("utf-8"))
 
               if payload.get("errors"):
                   raise RuntimeError(payload["errors"])
@@ -84,7 +83,7 @@ jobs:
               req = urllib.request.Request(url, headers=HEADERS)
 
               with urllib.request.urlopen(req, timeout=30) as res:
-                  return json.loads(res.read().decode())
+                  return json.loads(res.read().decode("utf-8"))
 
           today = dt.datetime.now(dt.timezone.utc)
           start = today - dt.timedelta(days=365)
@@ -117,23 +116,22 @@ jobs:
               "to": today.isoformat()
           })
 
-          coll = data["viewer"]["contributionsCollection"]
-          cal = coll["contributionCalendar"]
+          collection = data["viewer"]["contributionsCollection"]
+          calendar = collection["contributionCalendar"]
 
-          total_contributions = int(cal["totalContributions"])
-          commit_contributions = int(coll["totalCommitContributions"])
-          pr_contributions = int(coll["totalPullRequestContributions"])
-          issue_contributions = int(coll["totalIssueContributions"])
-          review_contributions = int(coll["totalPullRequestReviewContributions"])
-          restricted_contributions = int(coll["restrictedContributionsCount"])
+          total_contributions = int(calendar["totalContributions"])
+          commit_contributions = int(collection["totalCommitContributions"])
+          pr_contributions = int(collection["totalPullRequestContributions"])
+          issue_contributions = int(collection["totalIssueContributions"])
+          review_contributions = int(collection["totalPullRequestReviewContributions"])
+          hidden_contributions = int(collection["restrictedContributionsCount"])
 
           repos = []
           page = 1
 
           while True:
-              batch = rest_json(
-                  f"https://api.github.com/user/repos?visibility=all&affiliation=owner,collaborator,organization_member&per_page=100&page={page}"
-              )
+              url = f"https://api.github.com/user/repos?visibility=all&affiliation=owner,collaborator,organization_member&per_page=100&page={page}"
+              batch = rest_json(url)
 
               if not batch:
                   break
@@ -141,8 +139,9 @@ jobs:
               repos.extend(batch)
               page += 1
 
-          private_repo_count = sum(1 for repo in repos if repo.get("private"))
-          public_repo_count = sum(1 for repo in repos if not repo.get("private"))
+          total_repos = len(repos)
+          private_repos = sum(1 for repo in repos if repo.get("private"))
+          public_repos = total_repos - private_repos
           total_stars = sum(int(repo.get("stargazers_count", 0)) for repo in repos)
 
           language_bytes = {}
@@ -170,74 +169,105 @@ jobs:
 
           contribution_days = []
 
-          for week in cal["weeks"]:
+          for week in calendar["weeks"]:
               for day in week["contributionDays"]:
                   contribution_days.append({
                       "date": day["date"],
-                      "count": int(day["contributionCount"]),
+                      "count": int(day["contributionCount"])
                   })
 
           contribution_days = sorted(contribution_days, key=lambda day: day["date"])
           last_30 = contribution_days[-30:]
 
-          def write_file(filename, content):
-              with open(os.path.join(OUT, filename), "w", encoding="utf-8") as file:
+          def write_file(name, content):
+              with open(os.path.join(OUT, name), "w", encoding="utf-8") as file:
                   file.write(content)
 
-          def css():
+          def base_css():
               return """
               <style>
-                .title { font: 700 20px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }
-                .label { font: 600 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }
-                .muted { font: 400 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }
-                .value { font: 700 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }
-                .small { font: 600 11px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }
+                .title {
+                  font: 700 26px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                  fill: #f0f6fc;
+                }
+
+                .subtitle {
+                  font: 400 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                  fill: #8b949e;
+                }
+
+                .label {
+                  font: 500 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                  fill: #8b949e;
+                }
+
+                .value {
+                  font: 700 30px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                  fill: #58a6ff;
+                }
+
+                .small {
+                  font: 500 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                  fill: #c9d1d9;
+                }
               </style>
               """
 
-          def shell(width, height, inner):
+          def modern_shell(width, height, content):
               return f"""<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {css()}
-                <rect width="{width}" height="{height}" rx="8" fill="#0d1117"/>
-                <rect x="0.5" y="0.5" width="{width - 1}" height="{height - 1}" rx="7.5" stroke="#30363d"/>
-                {inner}
+                {base_css()}
+
+                <defs>
+                  <linearGradient id="line" x1="0" y1="0" x2="{width}" y2="0">
+                    <stop offset="0%" stop-color="#58a6ff"/>
+                    <stop offset="50%" stop-color="#1f6feb"/>
+                    <stop offset="100%" stop-color="#0d419d"/>
+                  </linearGradient>
+                </defs>
+
+                <rect width="{width}" height="{height}" rx="18" fill="#0d1117"/>
+                <rect x="0.5" y="0.5" width="{width - 1}" height="{height - 1}" rx="17.5" stroke="#30363d"/>
+                <rect x="28" y="26" width="{width - 56}" height="4" rx="2" fill="url(#line)"/>
+
+                {content}
               </svg>"""
 
-          def stats_card():
-              rows = [
-                  ("★", "Total Stars Earned:", total_stars),
-                  ("●", "Total Contributions:", total_contributions),
-                  ("⑂", "Commit Contributions:", commit_contributions),
-                  ("⑄", "Total PRs:", pr_contributions),
-                  ("!", "Total Issues:", issue_contributions),
-                  ("▣", "Code Reviews:", review_contributions),
-                  ("◈", "Private Repos:", private_repo_count),
-                  ("◇", "Public Repos:", public_repo_count),
-                  ("◆", "Private/Hidden Count:", restricted_contributions),
-              ]
-
-              row_svg = []
-              start_y = 58
-
-              for index, (icon, label, value) in enumerate(rows):
-                  y = start_y + index * 27
-
-                  row_svg.append(f"""
-                    <text x="30" y="{y}" class="value">{safe(icon)}</text>
-                    <text x="58" y="{y}" class="label">{safe(label)}</text>
-                    <text x="245" y="{y}" class="value">{fmt(value)}</text>
-                  """)
-
-              inner = f"""
-                <text x="30" y="34" class="title">{safe(DISPLAY_NAME)}'s GitHub Stats</text>
-                {''.join(row_svg)}
-
-                <circle cx="455" cy="143" r="50" fill="#161b22" stroke="#30363d"/>
-                <circle cx="455" cy="143" r="39" fill="#0d1117" stroke="#58a6ff" stroke-width="6"/>
-                <text x="423" y="157" style="font: 700 42px 'Segoe UI', Ubuntu, Sans-Serif; fill:#f0f6fc;">GH</text>
+          def stat_box(x, y, w, h, label, value):
+              return f"""
+                <rect x="{x}" y="{y}" width="{w}" height="{h}" rx="14" fill="#161b22" stroke="#30363d"/>
+                <text x="{x + 22}" y="{y + 32}" class="label">{safe(label)}</text>
+                <text x="{x + 22}" y="{y + 72}" class="value">{safe(value)}</text>
               """
 
-              return shell(520, 310, inner)
+          def stats_card():
+              content = f"""
+                <text x="40" y="72" class="title">GitHub Stats</text>
+                <text x="40" y="98" class="subtitle">Private + public activity generated from GitHub Actions</text>
+
+                {stat_box(40, 130, 210, 100, "Contributions", fmt(total_contributions))}
+                {stat_box(270, 130, 210, 100, "Commits", fmt(commit_contributions))}
+                {stat_box(500, 130, 210, 100, "Repositories", fmt(total_repos))}
+                {stat_box(730, 130, 210, 100, "Stars", fmt(total_stars))}
+
+                <rect x="40" y="260" width="900" height="76" rx="14" fill="#161b22" stroke="#30363d"/>
+
+                <text x="70" y="295" class="label">Pull Requests</text>
+                <text x="70" y="321" class="small">{fmt(pr_contributions)}</text>
+
+                <text x="230" y="295" class="label">Issues</text>
+                <text x="230" y="321" class="small">{fmt(issue_contributions)}</text>
+
+                <text x="390" y="295" class="label">Code Reviews</text>
+                <text x="390" y="321" class="small">{fmt(review_contributions)}</text>
+
+                <text x="570" y="295" class="label">Private Repos</text>
+                <text x="570" y="321" class="small">{fmt(private_repos)}</text>
+
+                <text x="750" y="295" class="label">Public Repos</text>
+                <text x="750" y="321" class="small">{fmt(public_repos)}</text>
+              """
+
+              return modern_shell(1000, 370, content)
 
           def languages_card():
               colors = [
@@ -249,58 +279,53 @@ jobs:
                   "#a5d6ff"
               ]
 
-              bar_x = 30
-              bar_y = 66
-              bar_w = 460
-              bar_h = 9
-
-              segments = []
+              bar_x = 40
+              bar_y = 118
+              bar_w = 920
+              bar_h = 18
               current_x = bar_x
-              lang_rows = []
+              segments = []
+              rows = []
 
-              if not top_languages:
-                  lang_rows.append(
-                      '<text x="30" y="120" class="muted">No language data found</text>'
+              for i, (lang, size) in enumerate(top_languages):
+                  pct = size / total_language_bytes * 100
+                  width = max(4, bar_w * size / total_language_bytes)
+
+                  segments.append(
+                      f'<rect x="{current_x:.2f}" y="{bar_y}" width="{width:.2f}" height="{bar_h}" fill="{colors[i % len(colors)]}"/>'
                   )
-              else:
-                  for i, (lang, size) in enumerate(top_languages):
-                      pct = size / total_language_bytes * 100
-                      width = max(3, bar_w * size / total_language_bytes)
 
-                      segments.append(
-                          f'<rect x="{current_x:.2f}" y="{bar_y}" width="{width:.2f}" height="{bar_h}" fill="{colors[i % len(colors)]}"/>'
-                      )
+                  current_x += width
 
-                      current_x += width
+                  col = i % 3
+                  row = i // 3
+                  x = 45 + col * 310
+                  y = 185 + row * 42
 
-                      col = i % 2
-                      row = i // 2
-                      x = 30 + col * 230
-                      y = 112 + row * 34
+                  rows.append(f"""
+                    <circle cx="{x}" cy="{y - 5}" r="6" fill="{colors[i % len(colors)]}"/>
+                    <text x="{x + 18}" y="{y}" class="small">{safe(lang)}</text>
+                    <text x="{x + 150}" y="{y}" class="label">{pct:.1f}%</text>
+                  """)
 
-                      lang_rows.append(f"""
-                        <circle cx="{x}" cy="{y - 4}" r="5" fill="{colors[i % len(colors)]}"/>
-                        <text x="{x + 14}" y="{y}" class="label">{safe(lang)}</text>
-                        <text x="{x + 132}" y="{y}" class="small">{pct:.1f}%</text>
-                      """)
+              content = f"""
+                <text x="40" y="72" class="title">Most Used Languages</text>
+                <text x="40" y="98" class="subtitle">Calculated from public + private repositories visible to your token</text>
 
-              inner = f"""
-                <text x="30" y="34" class="title">Most Used Languages</text>
-
-                <clipPath id="clip">
-                  <rect x="{bar_x}" y="{bar_y}" width="{bar_w}" height="{bar_h}" rx="4.5"/>
+                <clipPath id="bar">
+                  <rect x="{bar_x}" y="{bar_y}" width="{bar_w}" height="{bar_h}" rx="9"/>
                 </clipPath>
 
-                <g clip-path="url(#clip)">
+                <g clip-path="url(#bar)">
                   {''.join(segments)}
                 </g>
 
-                <rect x="{bar_x}" y="{bar_y}" width="{bar_w}" height="{bar_h}" rx="4.5" stroke="#30363d"/>
+                <rect x="{bar_x}" y="{bar_y}" width="{bar_w}" height="{bar_h}" rx="9" stroke="#30363d"/>
 
-                {''.join(lang_rows)}
+                {''.join(rows)}
               """
 
-              return shell(520, 210, inner)
+              return modern_shell(1000, 290, content)
 
           def activity_card():
               counts = [day["count"] for day in last_30]
@@ -309,10 +334,10 @@ jobs:
               max_count = max(counts) if counts else 1
               max_count = max(1, max_count)
 
-              plot_x = 45
-              plot_y = 58
-              plot_w = 430
-              plot_h = 125
+              plot_x = 70
+              plot_y = 115
+              plot_w = 860
+              plot_h = 150
 
               grid = []
 
@@ -325,13 +350,13 @@ jobs:
                   )
 
                   grid.append(
-                      f'<text x="18" y="{y + 4:.1f}" class="small">{value}</text>'
+                      f'<text x="38" y="{y + 4:.1f}" class="label">{value}</text>'
                   )
 
               points = []
 
               if counts:
-                  step = plot_w / max(1, (len(counts) - 1))
+                  step = plot_w / max(1, len(counts) - 1)
 
                   for i, count in enumerate(counts):
                       x = plot_x + i * step
@@ -341,7 +366,7 @@ jobs:
               polyline = " ".join(f"{x:.1f},{y:.1f}" for x, y in points)
 
               dots = "".join(
-                  f'<circle cx="{x:.1f}" cy="{y:.1f}" r="3.5" fill="#58a6ff"/>'
+                  f'<circle cx="{x:.1f}" cy="{y:.1f}" r="4" fill="#58a6ff"/>'
                   for x, y in points
               )
 
@@ -352,29 +377,29 @@ jobs:
                       x = plot_x + idx * (plot_w / (len(labels) - 1))
 
                       x_labels.append(
-                          f'<text x="{x - 12:.1f}" y="206" class="small">{safe(labels[idx])}</text>'
+                          f'<text x="{x - 16:.1f}" y="300" class="label">{safe(labels[idx])}</text>'
                       )
 
-              inner = f"""
-                <text x="30" y="34" class="title">Contribution Activity</text>
-                <text x="330" y="34" class="muted">Last 30 days · {fmt(sum(counts))} contributions</text>
+              content = f"""
+                <text x="40" y="72" class="title">Contribution Activity</text>
+                <text x="40" y="98" class="subtitle">Last 30 days · {fmt(sum(counts))} contributions</text>
 
                 {''.join(grid)}
 
-                <polyline points="{polyline}" fill="none" stroke="#1f6feb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="{polyline}" fill="none" stroke="#1f6feb" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 
                 {dots}
 
                 {''.join(x_labels)}
               """
 
-              return shell(520, 225, inner)
+              return modern_shell(1000, 330, content)
 
-          write_file("github-private-stats.svg", stats_card())
-          write_file("github-private-languages.svg", languages_card())
-          write_file("github-private-activity.svg", activity_card())
+          write_file("github-private-stats-modern.svg", stats_card())
+          write_file("github-private-languages-modern.svg", languages_card())
+          write_file("github-private-activity-modern.svg", activity_card())
 
-          print("Generated old-style private stats cards.")
+          print("Generated modern private stats SVGs.")
           PY
 
       - name: Push generated SVGs to output branch
