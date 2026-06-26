@@ -144,15 +144,15 @@
 <p align="center">
   <img
     width="100%"
-    src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-private-stats.svg"
-    alt="Yousfi Mohamed Houssam private and public GitHub stats"
+    src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-private-stats-modern.svg"
+    alt="Yousfi Mohamed Houssam GitHub stats"
   />
 </p>
 
 <p align="center">
   <img
     width="100%"
-    src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-private-languages.svg"
+    src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-private-languages-modern.svg"
     alt="Yousfi Mohamed Houssam most used languages"
   />
 </p>
@@ -160,7 +160,7 @@
 <p align="center">
   <img
     width="100%"
-    src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-private-activity.svg"
+    src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-private-activity-modern.svg"
     alt="Yousfi Mohamed Houssam contribution activity"
   />
 </p>
