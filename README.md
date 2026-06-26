@@ -174,37 +174,31 @@
 </p>
 
 ---
-
 ## 🐍 Contribution Snake
 
-<table align="center">
-  <tr>
-    <td align="center">
-      <b>My GitHub contributions</b>
-      <br />
-      <sub>Generated automatically from my GitHub contribution graph</sub>
-      <br /><br />
+<p align="center">
+  <b>My GitHub contributions</b>
+  <br />
+  <sub>Public + private contribution activity, generated automatically</sub>
+</p>
 
-<picture>
-  <source
-    media="(prefers-color-scheme: dark)"
-    srcset="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake-dark.svg"
-  />
-  <source
-    media="(prefers-color-scheme: light)"
-    srcset="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake-light.svg"
-  />
-  <img
-    alt="Yousfi Mohamed Houssam GitHub contribution snake"
-    src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake-dark.svg"
-    width="100%"
-  />
-</picture>
-
-  </td>
-  </tr>
-</table>
-
+<p align="center">
+  <picture>
+    <source
+      media="(prefers-color-scheme: dark)"
+      srcset="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake-dark.svg"
+    />
+    <source
+      media="(prefers-color-scheme: light)"
+      srcset="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake-light.svg"
+    />
+    <img
+      alt="Yousfi Mohamed Houssam GitHub contribution snake"
+      src="https://raw.githubusercontent.com/yousfimh/yousfimh/output/github-snake-dark.svg"
+      width="100%"
+    />
+  </picture>
+</p>
 ---
 
 ## 🤝 Let's Connect
