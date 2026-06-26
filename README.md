@@ -143,7 +143,6 @@
 <p align="center">
   <b>My GitHub contributions</b>
   <br />
-  <sub>Public + private contribution activity, generated automatically</sub>
 </p>
 
 <p align="center">
