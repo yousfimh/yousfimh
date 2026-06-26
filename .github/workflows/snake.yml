@@ -13,12 +13,22 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
+    env:
+      SNK_GITHUB_TOKEN: ${{ secrets.SNK_GITHUB_TOKEN }}
+
     steps:
-      - name: Generate snake SVG
-        uses: Platane/snk/svg-only@v3
+      - name: Check token exists
+        run: |
+          if [ -z "$SNK_GITHUB_TOKEN" ]; then
+            echo "Missing SNK_GITHUB_TOKEN secret"
+            exit 1
+          fi
+
+      - name: Generate snake SVG with private contributions
+        uses: Platane/snk@v3
         with:
           github_user_name: yousfimh
-          github_token: ${{ secrets.SNK_GITHUB_TOKEN || github.token }}
+          github_token: ${{ secrets.SNK_GITHUB_TOKEN }}
           outputs: |
             dist/github-snake.svg
             dist/github-snake-dark.svg?palette=github-dark
