@@ -33,7 +33,7 @@ jobs:
             dist/github-snake-blue-light.svg?color_snake=%230969da&color_dots=%23ebf5ff,%23cfe8ff,%237cc0ff,%232f81f7,%230969da
             dist/github-snake-blue-dark.svg?color_snake=%2358a6ff&color_dots=%230d1117,%230d419d,%230969da,%231f6feb,%2358a6ff
 
-      - name: Generate modern private stats
+      - name: Generate old-style private stats
         run: |
           python3 <<'PY'
           import os
@@ -51,6 +51,31 @@ jobs:
               "Accept": "application/vnd.github+json",
               "User-Agent": "yousfimh-profile-readme"
           }
+
+          LANG_COLORS = {
+              "TypeScript": "#3178c6",
+              "JavaScript": "#f1e05a",
+              "CSS": "#563d7c",
+              "HTML": "#e34c26",
+              "Python": "#3572A5",
+              "Java": "#b07219",
+              "C": "#555555",
+              "C++": "#f34b7d",
+              "Rust": "#dea584",
+              "PLpgSQL": "#336790",
+              "Astro": "#ff5d01"
+          }
+
+          FALLBACK_COLORS = [
+              "#58a6ff",
+              "#1f6feb",
+              "#8957e5",
+              "#f1e05a",
+              "#3fb950",
+              "#f78166",
+              "#79c0ff",
+              "#a5d6ff"
+          ]
 
           def safe(value):
               return html.escape(str(value), quote=True)
@@ -139,9 +164,6 @@ jobs:
               repos.extend(batch)
               page += 1
 
-          total_repos = len(repos)
-          private_repos = sum(1 for repo in repos if repo.get("private"))
-          public_repos = total_repos - private_repos
           total_stars = sum(int(repo.get("stargazers_count", 0)) for repo in repos)
 
           language_bytes = {}
@@ -165,7 +187,7 @@ jobs:
               language_bytes.items(),
               key=lambda item: item[1],
               reverse=True
-          )[:6]
+          )[:8]
 
           contribution_days = []
 
@@ -177,229 +199,227 @@ jobs:
                   })
 
           contribution_days = sorted(contribution_days, key=lambda day: day["date"])
-          last_30 = contribution_days[-30:]
 
           def write_file(name, content):
               with open(os.path.join(OUT, name), "w", encoding="utf-8") as file:
                   file.write(content)
 
-          def base_css():
+          def date_label(date_string):
+              d = dt.date.fromisoformat(date_string)
+              return d.strftime("%b %-d")
+
+          def calculate_streaks(days):
+              parsed = [
+                  (dt.date.fromisoformat(day["date"]), int(day["count"]))
+                  for day in days
+              ]
+
+              parsed.sort(key=lambda item: item[0])
+
+              current = 0
+              current_start = None
+              current_end = None
+
+              for d, count in reversed(parsed):
+                  if count > 0:
+                      if current == 0:
+                          current_end = d
+                      current_start = d
+                      current += 1
+                  else:
+                      break
+
+              longest = 0
+              longest_start = None
+              longest_end = None
+              running = 0
+              running_start = None
+
+              for d, count in parsed:
+                  if count > 0:
+                      if running == 0:
+                          running_start = d
+
+                      running += 1
+
+                      if running > longest:
+                          longest = running
+                          longest_start = running_start
+                          longest_end = d
+                  else:
+                      running = 0
+                      running_start = None
+
+              def label_range(start_date, end_date, value):
+                  if value == 0:
+                      return "No streak"
+
+                  if value == 1:
+                      return start_date.strftime("%b %-d")
+
+                  return f"{start_date.strftime('%b %-d')} - {end_date.strftime('%b %-d')}"
+
+              current_range = label_range(current_start, current_end, current)
+              longest_range = label_range(longest_start, longest_end, longest)
+
+              return current, current_range, longest, longest_range
+
+          current_streak, current_range, longest_streak, longest_range = calculate_streaks(contribution_days)
+
+          start_label = date_label(contribution_days[0]["date"])
+          end_label = "Present"
+
+          def css():
               return """
               <style>
                 .title {
-                  font: 700 26px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-                  fill: #f0f6fc;
-                }
-
-                .subtitle {
-                  font: 400 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-                  fill: #8b949e;
-                }
-
-                .label {
-                  font: 500 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-                  fill: #8b949e;
-                }
-
-                .value {
-                  font: 700 30px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                  font: 700 18px -apple-system, BlinkMacSystemFont, 'Segoe UI', Ubuntu, sans-serif;
                   fill: #58a6ff;
                 }
 
-                .small {
-                  font: 500 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                .label {
+                  font: 600 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', Ubuntu, sans-serif;
                   fill: #c9d1d9;
+                }
+
+                .muted {
+                  font: 400 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', Ubuntu, sans-serif;
+                  fill: #8b949e;
+                }
+
+                .big {
+                  font: 700 28px -apple-system, BlinkMacSystemFont, 'Segoe UI', Ubuntu, sans-serif;
+                  fill: #58a6ff;
+                }
+
+                .white {
+                  font: 700 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', Ubuntu, sans-serif;
+                  fill: #f0f6fc;
+                }
+
+                .small {
+                  font: 500 10px -apple-system, BlinkMacSystemFont, 'Segoe UI', Ubuntu, sans-serif;
+                  fill: #8b949e;
                 }
               </style>
               """
 
-          def modern_shell(width, height, content):
+          def shell(width, height, inner):
               return f"""<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {base_css()}
-
-                <defs>
-                  <linearGradient id="line" x1="0" y1="0" x2="{width}" y2="0">
-                    <stop offset="0%" stop-color="#58a6ff"/>
-                    <stop offset="50%" stop-color="#1f6feb"/>
-                    <stop offset="100%" stop-color="#0d419d"/>
-                  </linearGradient>
-                </defs>
-
-                <rect width="{width}" height="{height}" rx="18" fill="#0d1117"/>
-                <rect x="0.5" y="0.5" width="{width - 1}" height="{height - 1}" rx="17.5" stroke="#30363d"/>
-                <rect x="28" y="26" width="{width - 56}" height="4" rx="2" fill="url(#line)"/>
-
-                {content}
+                {css()}
+                <rect width="{width}" height="{height}" rx="8" fill="#0d1117"/>
+                {inner}
               </svg>"""
 
-          def stat_box(x, y, w, h, label, value):
-              return f"""
-                <rect x="{x}" y="{y}" width="{w}" height="{h}" rx="14" fill="#161b22" stroke="#30363d"/>
-                <text x="{x + 22}" y="{y + 32}" class="label">{safe(label)}</text>
-                <text x="{x + 22}" y="{y + 72}" class="value">{safe(value)}</text>
-              """
-
           def stats_card():
-              content = f"""
-                <text x="40" y="72" class="title">GitHub Stats</text>
-                <text x="40" y="98" class="subtitle">Private + public activity generated from GitHub Actions</text>
-
-                {stat_box(40, 130, 210, 100, "Contributions", fmt(total_contributions))}
-                {stat_box(270, 130, 210, 100, "Commits", fmt(commit_contributions))}
-                {stat_box(500, 130, 210, 100, "Repositories", fmt(total_repos))}
-                {stat_box(730, 130, 210, 100, "Stars", fmt(total_stars))}
-
-                <rect x="40" y="260" width="900" height="76" rx="14" fill="#161b22" stroke="#30363d"/>
-
-                <text x="70" y="295" class="label">Pull Requests</text>
-                <text x="70" y="321" class="small">{fmt(pr_contributions)}</text>
-
-                <text x="230" y="295" class="label">Issues</text>
-                <text x="230" y="321" class="small">{fmt(issue_contributions)}</text>
-
-                <text x="390" y="295" class="label">Code Reviews</text>
-                <text x="390" y="321" class="small">{fmt(review_contributions)}</text>
-
-                <text x="570" y="295" class="label">Private Repos</text>
-                <text x="570" y="321" class="small">{fmt(private_repos)}</text>
-
-                <text x="750" y="295" class="label">Public Repos</text>
-                <text x="750" y="321" class="small">{fmt(public_repos)}</text>
-              """
-
-              return modern_shell(1000, 370, content)
-
-          def languages_card():
-              colors = [
-                  "#58a6ff",
-                  "#1f6feb",
-                  "#0969da",
-                  "#0d419d",
-                  "#79c0ff",
-                  "#a5d6ff"
+              rows = [
+                  ("✧", "Total Stars Earned:", total_stars),
+                  ("◷", "Total Commits:", commit_contributions),
+                  ("⑂", "Total PRs:", pr_contributions),
+                  ("ⓘ", "Total Issues:", issue_contributions),
+                  ("▣", "Total Contributions:", total_contributions),
               ]
 
-              bar_x = 40
-              bar_y = 118
-              bar_w = 920
-              bar_h = 18
-              current_x = bar_x
+              row_svg = []
+              y_start = 56
+
+              for i, (icon, label, value) in enumerate(rows):
+                  y = y_start + i * 25
+
+                  row_svg.append(f"""
+                    <text x="32" y="{y}" class="title">{safe(icon)}</text>
+                    <text x="58" y="{y}" class="label">{safe(label)}</text>
+                    <text x="255" y="{y}" class="label">{fmt(value)}</text>
+                  """)
+
+              inner = f"""
+                <text x="32" y="31" class="title">Yousfi Mohamed Houssam's GitHub Stats</text>
+
+                {''.join(row_svg)}
+
+                <circle cx="865" cy="111" r="48" fill="#161b22" stroke="#30363d"/>
+                <circle cx="865" cy="111" r="36" fill="#0d1117" stroke="#58a6ff" stroke-width="6"/>
+                <text x="829" y="125" style="font: 800 42px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; fill:#f0f6fc;">GH</text>
+              """
+
+              return shell(1000, 210, inner)
+
+          def streak_card():
+              inner = f"""
+                <line x1="330" y1="42" x2="330" y2="180" stroke="#8b949e" stroke-width="2"/>
+                <line x1="670" y1="42" x2="670" y2="180" stroke="#8b949e" stroke-width="2"/>
+
+                <text x="170" y="88" text-anchor="middle" class="big">{fmt(total_contributions)}</text>
+                <text x="170" y="121" text-anchor="middle" class="white">Total Contributions</text>
+                <text x="170" y="151" text-anchor="middle" class="muted">{safe(start_label)} - {safe(end_label)}</text>
+
+                <circle cx="500" cy="95" r="43" fill="#0d1117" stroke="#1f6feb" stroke-width="6"/>
+                <text x="500" y="105" text-anchor="middle" style="font: 700 28px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; fill:#f0f6fc;">{fmt(current_streak)}</text>
+                <text x="500" y="158" text-anchor="middle" class="white">Current Streak</text>
+                <text x="500" y="184" text-anchor="middle" class="muted">{safe(current_range)}</text>
+
+                <text x="830" y="88" text-anchor="middle" class="big">{fmt(longest_streak)}</text>
+                <text x="830" y="121" text-anchor="middle" class="white">Longest Streak</text>
+                <text x="830" y="151" text-anchor="middle" class="muted">{safe(longest_range)}</text>
+              """
+
+              return shell(1000, 220, inner)
+
+          def languages_card():
+              bar_x = 32
+              bar_y = 66
+              bar_w = 936
+              bar_h = 8
+
               segments = []
-              rows = []
+              legends = []
+              current_x = bar_x
 
               for i, (lang, size) in enumerate(top_languages):
                   pct = size / total_language_bytes * 100
-                  width = max(4, bar_w * size / total_language_bytes)
+                  color = LANG_COLORS.get(lang, FALLBACK_COLORS[i % len(FALLBACK_COLORS)])
+                  width = max(3, bar_w * size / total_language_bytes)
 
                   segments.append(
-                      f'<rect x="{current_x:.2f}" y="{bar_y}" width="{width:.2f}" height="{bar_h}" fill="{colors[i % len(colors)]}"/>'
+                      f'<rect x="{current_x:.2f}" y="{bar_y}" width="{width:.2f}" height="{bar_h}" fill="{color}"/>'
                   )
 
                   current_x += width
 
-                  col = i % 3
-                  row = i // 3
-                  x = 45 + col * 310
-                  y = 185 + row * 42
+                  col = i % 4
+                  row = i // 4
 
-                  rows.append(f"""
-                    <circle cx="{x}" cy="{y - 5}" r="6" fill="{colors[i % len(colors)]}"/>
-                    <text x="{x + 18}" y="{y}" class="small">{safe(lang)}</text>
-                    <text x="{x + 150}" y="{y}" class="label">{pct:.1f}%</text>
+                  x = 32 + col * 235
+                  y = 105 + row * 30
+
+                  legends.append(f"""
+                    <circle cx="{x}" cy="{y - 4}" r="5" fill="{color}"/>
+                    <text x="{x + 14}" y="{y}" class="small">{safe(lang)} {pct:.2f}%</text>
                   """)
 
-              content = f"""
-                <text x="40" y="72" class="title">Most Used Languages</text>
-                <text x="40" y="98" class="subtitle">Calculated from public + private repositories visible to your token</text>
+              inner = f"""
+                <text x="32" y="34" class="title">Most Used Languages</text>
 
-                <clipPath id="bar">
-                  <rect x="{bar_x}" y="{bar_y}" width="{bar_w}" height="{bar_h}" rx="9"/>
+                <clipPath id="langBar">
+                  <rect x="{bar_x}" y="{bar_y}" width="{bar_w}" height="{bar_h}" rx="4"/>
                 </clipPath>
 
-                <g clip-path="url(#bar)">
+                <g clip-path="url(#langBar)">
                   {''.join(segments)}
                 </g>
 
-                <rect x="{bar_x}" y="{bar_y}" width="{bar_w}" height="{bar_h}" rx="9" stroke="#30363d"/>
+                <rect x="{bar_x}" y="{bar_y}" width="{bar_w}" height="{bar_h}" rx="4" stroke="#30363d"/>
 
-                {''.join(rows)}
+                {''.join(legends)}
               """
 
-              return modern_shell(1000, 290, content)
+              return shell(1000, 155, inner)
 
-          def activity_card():
-              counts = [day["count"] for day in last_30]
-              labels = [day["date"][5:] for day in last_30]
+          write_file("github-private-stats-clean.svg", stats_card())
+          write_file("github-private-streak-clean.svg", streak_card())
+          write_file("github-private-languages-clean.svg", languages_card())
 
-              max_count = max(counts) if counts else 1
-              max_count = max(1, max_count)
-
-              plot_x = 70
-              plot_y = 115
-              plot_w = 860
-              plot_h = 150
-
-              grid = []
-
-              for i in range(5):
-                  y = plot_y + i * (plot_h / 4)
-                  value = round(max_count - i * (max_count / 4))
-
-                  grid.append(
-                      f'<line x1="{plot_x}" y1="{y:.1f}" x2="{plot_x + plot_w}" y2="{y:.1f}" stroke="#21262d"/>'
-                  )
-
-                  grid.append(
-                      f'<text x="38" y="{y + 4:.1f}" class="label">{value}</text>'
-                  )
-
-              points = []
-
-              if counts:
-                  step = plot_w / max(1, len(counts) - 1)
-
-                  for i, count in enumerate(counts):
-                      x = plot_x + i * step
-                      y = plot_y + plot_h - (count / max_count * plot_h)
-                      points.append((x, y))
-
-              polyline = " ".join(f"{x:.1f},{y:.1f}" for x, y in points)
-
-              dots = "".join(
-                  f'<circle cx="{x:.1f}" cy="{y:.1f}" r="4" fill="#58a6ff"/>'
-                  for x, y in points
-              )
-
-              x_labels = []
-
-              for idx in [0, 7, 14, 21, 29]:
-                  if idx < len(labels) and len(labels) > 1:
-                      x = plot_x + idx * (plot_w / (len(labels) - 1))
-
-                      x_labels.append(
-                          f'<text x="{x - 16:.1f}" y="300" class="label">{safe(labels[idx])}</text>'
-                      )
-
-              content = f"""
-                <text x="40" y="72" class="title">Contribution Activity</text>
-                <text x="40" y="98" class="subtitle">Last 30 days · {fmt(sum(counts))} contributions</text>
-
-                {''.join(grid)}
-
-                <polyline points="{polyline}" fill="none" stroke="#1f6feb" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-
-                {dots}
-
-                {''.join(x_labels)}
-              """
-
-              return modern_shell(1000, 330, content)
-
-          write_file("github-private-stats-modern.svg", stats_card())
-          write_file("github-private-languages-modern.svg", languages_card())
-          write_file("github-private-activity-modern.svg", activity_card())
-
-          print("Generated modern private stats SVGs.")
+          print("Generated clean private stats.")
           PY
 
       - name: Push generated SVGs to output branch
