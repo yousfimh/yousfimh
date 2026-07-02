@@ -1,0 +1,53 @@
+<svg width="1000" height="220" viewBox="0 0 1000 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+      
+    <style>
+      .title {
+        font: 700 18px -apple-system, BlinkMacSystemFont, 'Segoe UI', Ubuntu, sans-serif;
+        fill: #58a6ff;
+      }
+
+      .label {
+        font: 600 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', Ubuntu, sans-serif;
+        fill: #c9d1d9;
+      }
+
+      .muted {
+        font: 400 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', Ubuntu, sans-serif;
+        fill: #8b949e;
+      }
+
+      .big {
+        font: 700 28px -apple-system, BlinkMacSystemFont, 'Segoe UI', Ubuntu, sans-serif;
+        fill: #58a6ff;
+      }
+
+      .white {
+        font: 700 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', Ubuntu, sans-serif;
+        fill: #f0f6fc;
+      }
+
+      .small {
+        font: 500 10px -apple-system, BlinkMacSystemFont, 'Segoe UI', Ubuntu, sans-serif;
+        fill: #8b949e;
+      }
+    </style>
+    
+      <rect width="1000" height="220" rx="8" fill="#0d1117"/>
+      
+      <line x1="330" y1="42" x2="330" y2="180" stroke="#8b949e" stroke-width="2"/>
+      <line x1="670" y1="42" x2="670" y2="180" stroke="#8b949e" stroke-width="2"/>
+
+      <text x="170" y="88" text-anchor="middle" class="big">1,560</text>
+      <text x="170" y="121" text-anchor="middle" class="white">Total Contributions</text>
+      <text x="170" y="151" text-anchor="middle" class="muted">Jul 2 - Present</text>
+
+      <circle cx="500" cy="95" r="43" fill="#0d1117" stroke="#1f6feb" stroke-width="6"/>
+      <text x="500" y="105" text-anchor="middle" style="font: 700 28px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; fill:#f0f6fc;">0</text>
+      <text x="500" y="158" text-anchor="middle" class="white">Current Streak</text>
+      <text x="500" y="184" text-anchor="middle" class="muted">No streak</text>
+
+      <text x="830" y="88" text-anchor="middle" class="big">20</text>
+      <text x="830" y="121" text-anchor="middle" class="white">Longest Streak</text>
+      <text x="830" y="151" text-anchor="middle" class="muted">Feb 15 - Mar 6</text>
+    
+    </svg>
